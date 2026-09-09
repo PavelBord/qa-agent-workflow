@@ -1,0 +1,32 @@
+{
+  "run_id": "20260909-local-review-002",
+  "source": {
+    "type": "Confluence",
+    "page_id": "1376257",
+    "version": 4,
+    "status": "unverified_for_resume",
+    "identity": "Confluence pageId=1376257; site identity pending confirmation",
+    "content_sha256": null,
+    "confirmed": false,
+    "confirmed_at": null
+  },
+  "gates": {
+    "gate_1": "BLOCKED",
+    "gate_2": "BLOCKED",
+    "gate_3": "BLOCKED"
+  },
+  "next_stage": "requirements_clarification",
+  "active_artifacts": {
+    "requirement_review": "artifacts/requirement-review.md#current-gate-1-20260909-local-review-002",
+    "jira_tasks": "artifacts/jira-tasks.md#current-gate-2-20260909-local-review-002",
+    "qase_model": "artifacts/qase-test-model.md#current-gate-3-20260909-local-review-002"
+  },
+  "blocking_findings": [
+    "AMB-1",
+    "AMB-2",
+    "LR-1",
+    "LR-5"
+  ],
+  "external_mutations_in_this_review": false,
+  "schema_version": 1
+}

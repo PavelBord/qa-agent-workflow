@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "validate-workflow": "node tools/validate-workflow.mjs",
+    "test:workflow": "node tools/validate-workflow.mjs --self-test"
+  },
   "dependencies": {
     "@opencode-ai/plugin": "1.18.25"
   }

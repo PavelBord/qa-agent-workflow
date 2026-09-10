@@ -1,32 +1,132 @@
 {
-  "run_id": "20260909-local-review-002",
+  "run_id": "20260910-user-input-016",
+  "run_type": "resume",
   "source": {
-    "type": "Confluence",
-    "page_id": "1376257",
-    "version": 4,
-    "status": "unverified_for_resume",
-    "identity": "Confluence pageId=1376257; site identity pending confirmation",
-    "content_sha256": null,
-    "confirmed": false,
-    "confirmed_at": null
+    "type": "user_text",
+    "identity": "Регистрация пользователя — текст из Confluence, переданный пользователем в текущем диалоге 2026-09-10",
+    "version": null,
+    "content_sha256": "c0d11359b11455b5fdb7b270363748b231ccc6483b6942393bde6db965534dfc",
+    "confirmed": true,
+    "confirmed_at": "2026-09-10T18:30:25+00:00",
+    "input_ref": "artifacts/requirement-review.md#user-input-20260910-016"
   },
   "gates": {
-    "gate_1": "BLOCKED",
-    "gate_2": "BLOCKED",
-    "gate_3": "BLOCKED"
+    "gate_1": "NOT_RUN",
+    "gate_2": "NOT_RUN",
+    "gate_3": "NOT_RUN"
+  },
+  "gate_reviews": {
+    "gate_1": {
+      "owner": "qa-orchestrator",
+      "reviewer": "qa-lead/product-owner",
+      "decision_at": "2026-09-10T18:30:25+00:00",
+      "evidence_refs": [
+        "artifacts/requirement-review.md#user-input-20260910-016",
+        "artifacts/audit-log.md#user-input-20260910-016"
+      ]
+    },
+    "gate_2": {
+      "owner": "qa-orchestrator",
+      "reviewer": "qa-lead",
+      "decision_at": "2026-09-10T18:30:25+00:00",
+      "evidence_refs": [
+        "artifacts/requirement-review.md#user-input-20260910-016",
+        "artifacts/audit-log.md#user-input-20260910-016"
+      ]
+    },
+    "gate_3": {
+      "owner": "qa-orchestrator",
+      "reviewer": "qa-lead",
+      "decision_at": "2026-09-10T18:30:25+00:00",
+      "evidence_refs": [
+        "artifacts/requirement-review.md#user-input-20260910-016",
+        "artifacts/audit-log.md#user-input-20260910-016"
+      ]
+    }
   },
   "next_stage": "requirements_clarification",
   "active_artifacts": {
-    "requirement_review": "artifacts/requirement-review.md#current-gate-1-20260909-local-review-002",
-    "jira_tasks": "artifacts/jira-tasks.md#current-gate-2-20260909-local-review-002",
-    "qase_model": "artifacts/qase-test-model.md#current-gate-3-20260909-local-review-002"
+    "requirement_review": null,
+    "jira_tasks": null,
+    "qase_model": null
   },
   "blocking_findings": [
     "AMB-1",
     "AMB-2",
     "LR-1",
-    "LR-5"
+    "LR-2",
+    "LR-3",
+    "LR-4",
+    "LR-5",
+    "AMB-3"
   ],
+  "blocking_finding_details": {
+    "AMB-1": {
+      "owner": "product-owner",
+      "reviewer": "qa-lead",
+      "decision_at": "2026-09-09T08:42:36Z",
+      "evidence_refs": [
+        "artifacts/requirement-review.md#current-gate-1-20260909-local-review-002"
+      ]
+    },
+    "AMB-2": {
+      "owner": "product-owner",
+      "reviewer": "qa-lead",
+      "decision_at": "2026-09-09T08:42:36Z",
+      "evidence_refs": [
+        "artifacts/requirement-review.md#current-gate-1-20260909-local-review-002"
+      ]
+    },
+    "LR-1": {
+      "owner": "qa-lead",
+      "reviewer": "qa-orchestrator",
+      "decision_at": "2026-09-09T08:42:36Z",
+      "evidence_refs": [
+        "artifacts/qase-test-model.md#current-gate-3-20260909-local-review-002"
+      ]
+    },
+    "LR-2": {
+      "owner": "qa-lead",
+      "reviewer": "qa-orchestrator",
+      "decision_at": "2026-09-09T08:42:36Z",
+      "evidence_refs": [
+        "artifacts/qase-test-model.md#current-gate-3-20260909-local-review-002"
+      ]
+    },
+    "LR-3": {
+      "owner": "qa-lead",
+      "reviewer": "qa-orchestrator",
+      "decision_at": "2026-09-09T08:42:36Z",
+      "evidence_refs": [
+        "artifacts/qase-test-model.md#current-gate-3-20260909-local-review-002"
+      ]
+    },
+    "LR-4": {
+      "owner": "qa-lead",
+      "reviewer": "qa-orchestrator",
+      "decision_at": "2026-09-09T08:42:36Z",
+      "evidence_refs": [
+        "artifacts/qase-test-model.md#current-gate-3-20260909-local-review-002"
+      ]
+    },
+    "LR-5": {
+      "owner": "qa-lead",
+      "reviewer": "qa-orchestrator",
+      "decision_at": "2026-09-09T08:42:36Z",
+      "evidence_refs": [
+        "artifacts/qase-test-model.md#current-gate-3-20260909-local-review-002"
+      ]
+    },
+    "AMB-3": {
+      "owner": "product-owner",
+      "reviewer": "qa-orchestrator",
+      "decision_at": "2026-09-10T18:30:25+00:00",
+      "evidence_refs": [
+        "artifacts/requirement-review.md#user-input-20260910-016",
+        "artifacts/audit-log.md#user-input-20260910-016"
+      ]
+    }
+  },
   "external_mutations_in_this_review": false,
   "schema_version": 1
 }

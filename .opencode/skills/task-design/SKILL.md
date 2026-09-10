@@ -119,6 +119,7 @@ description: Создаёт задачи Jira на основе Requirement Revi
 - ссылка;
 - Requirement ID;
 - FR/BR/AC mapping;
+- какие FR задача реализует, а какие указаны только как related или предусловия;
 - статус:
   - `created`
   - `existing`
@@ -132,6 +133,8 @@ description: Создаёт задачи Jira на основе Requirement Revi
 - ошибки;
 - блокировки;
 - эскалации.
+
+Artifact должен содержать `Jira Stage: PASS / FAIL / BLOCKED` — оценку этапа, не решение Gate #2.
 
 ## RULES
 

@@ -44,35 +44,7 @@ permission:
 
 `artifacts/jira-tasks.md` является официальным результатом Jira Stage.
 
-Для каждой задачи сохраняй:
-
-- Jira ID;
-- тип;
-- заголовок;
-- описание;
-- AC;
-- Requirement ID;
-- FR/BR/AC mapping;
-- какие FR задача реализует, а какие указаны только как related или предусловия;
-- приоритет;
-- ссылку;
-- статус:
-  - `created`
-  - `existing`
-  - `blocked`
-  - `error`.
-
-Также сохраняй:
-
-- результаты duplicate check;
-- результаты GET verification;
-- ошибки;
-- блокировки;
-- эскалации.
-
-Artifact должен содержать:
-
-`Jira Stage: PASS / FAIL / BLOCKED`
+Полный шаблон артефакта определён в [OUTPUT Skill `task-design`](../skills/task-design/SKILL.md#output). Заполни все обязательные поля и свидетельства по этому шаблону.
 
 ## Resume
 

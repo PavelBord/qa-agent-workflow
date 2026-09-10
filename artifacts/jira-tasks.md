@@ -1,5 +1,7 @@
 # Jira Tasks Artifact
 
+> **Навигация (уточнена 2026-09-10):** текущий вход — [снимок user_text](requirement-review.md#user-input-20260910-016). В [workflow-state.json](workflow-state.json) Gates нового входа NOT_RUN и active_artifacts=null; разрешено только уточнение. Решения Gates ниже относятся к историческим оценкам.
+
 ## Метаданные запуска
 
 | Поле | Значение |
@@ -298,10 +300,21 @@ Gate #2: для каждого обязательного FR явно опред
 ## Текущий раздел состояния — миграция формата 2026-09-09 (run_id=20260909-local-review-002)
 
 <a id="current-gate-2-20260909-local-review-002"></a>
-<!-- workflow-review {"run_id": "20260909-local-review-002", "source": {"type": "Confluence", "page_id": "1376257", "version": 4, "status": "unverified_for_resume", "identity": "Confluence pageId=1376257; site identity pending confirmation", "content_sha256": null, "confirmed": false, "confirmed_at": null}, "gate": "gate_2", "status": "BLOCKED", "decision_by": "qa-orchestrator", "reason": "Унаследованная блокировка Gate #1. При resume дополнительно подтвердить тип и приоритет: исторический Medium без подтверждённого контекста не является разрешённым default. Jira не изменялась."} -->
+<!-- workflow-review {"run_id": "20260909-local-review-002", "source": {"type": "Confluence", "page_id": "1376257", "version": 5, "status": "confirmed_for_resume", "identity": "Confluence pageId=1376257; site pavelbordukov20.atlassian.net", "content_sha256": "969cd9c5e1d204a7246648ca4dc490481d00b25d761ccd2adb1280054505cffa", "confirmed": true, "confirmed_at": "2026-09-09T08:41:07Z"}, "gate": "gate_2", "status": "BLOCKED", "decision_by": "qa-orchestrator", "owner": "qa-orchestrator", "reviewer": "qa-lead", "decision_at": "2026-09-09T08:42:36Z", "evidence_refs": ["artifacts/jira-tasks.md#current-gate-2-20260909-local-review-002", "artifacts/audit-log.md#resume-20260909-local-review-002"], "reason": "Унаследованная блокировка Gate #1 (AMB-1/AMB-2 не разрешены). Источник подтверждён при повторном resume. Тип и приоритет Jira требуют подтверждённого контекста: исторический Medium без подтверждения не является разрешённым default. Jira не изменялась."} -->
 
-Унаследованная блокировка Gate #1. При resume дополнительно подтвердить тип и приоритет: исторический Medium без подтверждённого контекста не является разрешённым default. Jira не изменялась.
+Источник подтверждён (2026-09-09T08:41:07Z, v5, содержание идентично v4). Унаследованная блокировка Gate #1 сохраняется: AMB-1/AMB-2 не разрешены. При resume дополнительно подтвердить тип и приоритет: исторический Medium без подтверждённого контекста не является разрешённым default. Jira не изменялась.
 
 **Текущий Gate #2: BLOCKED.**
 
 Это перенос действующей локальной блокировки в проверяемый формат, не повторная проверка источника или внешних сущностей. Предыдущие разделы сохранены как основания и история; активным является этот раздел.
+
+
+## Текущая оценка при внедрении снимка входа — 2026-09-10T18:26:16+00:00
+<a id="current-gate-2-20260910-source-maintenance-015"></a>
+<!-- workflow-review {"run_id": "20260910-source-maintenance-015", "source": {"type": "Confluence", "page_id": "1376257", "version": 5, "status": "requires_reconfirmation", "identity": "Confluence pageId=1376257; site pavelbordukov20.atlassian.net", "content_sha256": null, "confirmed": false, "confirmed_at": null, "input_ref": null}, "gate": "gate_2", "status": "BLOCKED", "decision_by": "qa-orchestrator", "owner": "qa-orchestrator", "reviewer": "qa-lead", "decision_at": "2026-09-10T18:26:16+00:00", "evidence_refs": ["artifacts/jira-tasks.md#current-gate-2-20260910-source-maintenance-015", "artifacts/jira-tasks.md#current-gate-2-20260909-local-review-002", "artifacts/audit-log.md#source-maintenance-20260910-015"], "reason": "SRC-1: отсутствует воспроизводимый подтверждённый снимок актуального входа. Прежний хеш не заменён хешем архивного текста; последнее известное значение версии 5 не является новым подтверждением. Сохраняются AMB-1/AMB-2 и LR-1..LR-5; внешние ID сохранены в предыдущих разделах для поиска и GET при resume. Продвижение запрещено."} -->
+
+Текущий Gate #2: BLOCKED
+
+SRC-1: отсутствует воспроизводимый подтверждённый снимок актуального входа. Прежний хеш не заменён хешем архивного текста; последнее известное значение версии 5 не является новым подтверждением. Сохраняются AMB-1/AMB-2 и LR-1..LR-5; внешние ID сохранены в предыдущих разделах для поиска и GET при resume. Продвижение запрещено.
+
+Это локальная блокирующая оценка обслуживания процесса, не продуктовый resume и не повторный GET. Требуются получение актуального текста Confluence, подтверждённых уточнений и нового снимка по контракту; исторические решения не перезаписаны.

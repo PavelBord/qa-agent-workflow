@@ -1,5 +1,7 @@
 # Qase Test Model Artifact
 
+> **Навигация (уточнена 2026-09-10):** текущий вход — [снимок user_text](requirement-review.md#user-input-20260910-016). В [workflow-state.json](workflow-state.json) Gates нового входа NOT_RUN и active_artifacts=null; разрешено только уточнение. Решения Gates ниже относятся к историческим оценкам.
+
 ## Метаданные
 
 | Поле | Значение |
@@ -11,11 +13,11 @@
 | Статус запуска | Новый запуск (артефакты предыдущего прогона удалены пользователем; не используются как активный источник; исторические тесты QT-4..QT-14 и suites 1–5 в текущем проекте ОТСУТСТВУЮТ — подтверждено оркестратором) |
 | Вход: Gate #1 | PASS (решение в `artifacts/requirement-review.md`, раздел «Решение оркестратора по Gate #1», run 20260909-001) |
 | Вход: Gate #2 | PASS (решение в `artifacts/jira-tasks.md`, раздел «Решение оркестратора по Gate #2», run 20260909-001; созданы KAN-21..KAN-24) |
-| Источник требований | `artifacts/requirement-review.md` v1.0, run 20260909-001 (активный вход). Confluence pageId=1376257, title="Login", version=4 |
-| Источник Jira mapping | `artifacts/jira-tasks.md`, run 20260909-001 (активный вход) |
+| Источник требований | `artifacts/requirement-review.md` v1.0, run 20260909-001 (вход исторического запуска). Confluence pageId=1376257, title="Login", version=4 |
+| Источник Jira mapping | `artifacts/jira-tasks.md`, run 20260909-001 (вход исторического запуска) |
 | Qase project | QT (Qase_Test); пользователь Pavel Bordukov (id 1), email pavelbordukov10@gmail.com |
 
-> **Текущая локальная оценка: run 20260909-local-review-002, раздел в конце файла.** Исходный отчёт v1.0 ниже сохранён как история; его PASS не является выводом локальной проверки.
+> **Исторический отчёт v1.0:** его PASS не является текущим решением Gate. Для действующей оценки используй указатель state, приведённый в начале файла.
 
 ---
 
@@ -700,10 +702,21 @@ GET-проверка сущностей Qase не используется ка�
 ## Текущий раздел состояния — миграция формата 2026-09-09 (run_id=20260909-local-review-002)
 
 <a id="current-gate-3-20260909-local-review-002"></a>
-<!-- workflow-review {"run_id": "20260909-local-review-002", "source": {"type": "Confluence", "page_id": "1376257", "version": 4, "status": "unverified_for_resume", "identity": "Confluence pageId=1376257; site identity pending confirmation", "content_sha256": null, "confirmed": false, "confirmed_at": null}, "gate": "gate_3", "status": "BLOCKED", "decision_by": "qa-orchestrator", "reason": "Gate #1/#2 не пройдены; недостатки LR-1..LR-5 остаются нерешёнными. Историческое создание suites не заменяет подтверждённую существующую target suite для resume. Qase не изменялась."} -->
+<!-- workflow-review {"run_id": "20260909-local-review-002", "source": {"type": "Confluence", "page_id": "1376257", "version": 5, "status": "confirmed_for_resume", "identity": "Confluence pageId=1376257; site pavelbordukov20.atlassian.net", "content_sha256": "969cd9c5e1d204a7246648ca4dc490481d00b25d761ccd2adb1280054505cffa", "confirmed": true, "confirmed_at": "2026-09-09T08:41:07Z"}, "gate": "gate_3", "status": "BLOCKED", "decision_by": "qa-orchestrator", "owner": "qa-orchestrator", "reviewer": "qa-lead", "decision_at": "2026-09-09T08:42:36Z", "evidence_refs": ["artifacts/qase-test-model.md#current-gate-3-20260909-local-review-002", "artifacts/audit-log.md#resume-20260909-local-review-002"], "reason": "Gate #1/#2 не пройдены; недостатки LR-1..LR-5 остаются нерешёнными. Источник подтверждён при повторном resume. Историческое создание suites не заменяет подтверждённую существующую target suite для resume. Qase не изменялась."} -->
 
-Gate #1/#2 не пройдены; недостатки LR-1..LR-5 остаются нерешёнными. Историческое создание suites не заменяет подтверждённую существующую target suite для resume. Qase не изменялась.
+Источник подтверждён (2026-09-09T08:41:07Z, v5, содержание идентично v4). Gate #1/#2 не пройдены; недостатки LR-1..LR-5 остаются нерешёнными (наблюдаемость LR-1, данные/повторный запуск LR-5). Историческое создание suites не заменяет подтверждённую существующую target suite для resume. Qase не изменялась.
 
 **Текущий Gate #3: BLOCKED.**
 
 Это перенос действующей локальной блокировки в проверяемый формат, не повторная проверка источника или внешних сущностей. Предыдущие разделы сохранены как основания и история; активным является этот раздел.
+
+
+## Текущая оценка при внедрении снимка входа — 2026-09-10T18:26:16+00:00
+<a id="current-gate-3-20260910-source-maintenance-015"></a>
+<!-- workflow-review {"run_id": "20260910-source-maintenance-015", "source": {"type": "Confluence", "page_id": "1376257", "version": 5, "status": "requires_reconfirmation", "identity": "Confluence pageId=1376257; site pavelbordukov20.atlassian.net", "content_sha256": null, "confirmed": false, "confirmed_at": null, "input_ref": null}, "gate": "gate_3", "status": "BLOCKED", "decision_by": "qa-orchestrator", "owner": "qa-orchestrator", "reviewer": "qa-lead", "decision_at": "2026-09-10T18:26:16+00:00", "evidence_refs": ["artifacts/qase-test-model.md#current-gate-3-20260910-source-maintenance-015", "artifacts/qase-test-model.md#current-gate-3-20260909-local-review-002", "artifacts/audit-log.md#source-maintenance-20260910-015"], "reason": "SRC-1: отсутствует воспроизводимый подтверждённый снимок актуального входа. Прежний хеш не заменён хешем архивного текста; последнее известное значение версии 5 не является новым подтверждением. Сохраняются AMB-1/AMB-2 и LR-1..LR-5; внешние ID сохранены в предыдущих разделах для поиска и GET при resume. Продвижение запрещено."} -->
+
+Текущий Gate #3: BLOCKED
+
+SRC-1: отсутствует воспроизводимый подтверждённый снимок актуального входа. Прежний хеш не заменён хешем архивного текста; последнее известное значение версии 5 не является новым подтверждением. Сохраняются AMB-1/AMB-2 и LR-1..LR-5; внешние ID сохранены в предыдущих разделах для поиска и GET при resume. Продвижение запрещено.
+
+Это локальная блокирующая оценка обслуживания процесса, не продуктовый resume и не повторный GET. Требуются получение актуального текста Confluence, подтверждённых уточнений и нового снимка по контракту; исторические решения не перезаписаны.

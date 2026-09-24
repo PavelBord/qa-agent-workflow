@@ -1,0 +1,17 @@
+{
+  "integration": {
+    "jira_project": "KAN",
+    "jira_issue": "KAN-30",
+    "issue_type": "Task",
+    "priority": "High",
+    "qase_project": "QT",
+    "qase_suite": 16
+  },
+  "quality_gate": {
+    "min_pass_rate": 100.0,
+    "min_expected_properties_pass_rate": 95.0,
+    "max_forbidden_behavior_violation_rate": 0.0,
+    "max_errors": 0,
+    "evaluator_timeout_seconds": 300
+  }
+}

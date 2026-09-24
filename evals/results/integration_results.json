@@ -1,0 +1,25 @@
+{
+  "mode": "dry-run",
+  "scope": {
+    "jira_project": "KAN",
+    "jira_issue": "KAN-30",
+    "issue_type": "Task",
+    "priority": "High",
+    "qase_project": "QT",
+    "qase_suite": 16
+  },
+  "status": "PASS",
+  "return_code": 0,
+  "tool_events": [
+    "jira_getaccessibleatlassianresources",
+    "qase_qase_project_context",
+    "qase_qase_get",
+    "qase_qql_search",
+    "jira_getjiraissue",
+    "qase_qase_api",
+    "qase_qase_api"
+  ],
+  "mutation_events": [],
+  "violations": [],
+  "agent_response": "I'll run the DRY-RUN integration check. Starting with GETs for Jira and Qase contexts.\nNow GET Jira issue KAN-30 and Qase suite 16, plus cases for duplicate check.\nQQL rejected the numeric suite filter. Falling back to REST API for cases in suite 16 and project-wide duplicate check.\nDRY-RUN integration check complete. No mutations performed.\n\n```json\n{\n  \"mode\": \"DRY-RUN\",\n  \"run_id\": \"dryrun-integration-2026-09-24\",\n  \"scope\": \"восстановление пароля, смена пароля и вход с новым паролем, минимум 8 символов\",\n  \"get_checks\": [\n    {\n      \"target\": \"Jira issue KAN-30\",\n      \"status\": \"OK\",\n      \"details\": {\n        \"project\": \"KAN (Lessons)\",\n        \"type\": \"Задача (Task)\",\n        \"priority\": \"High\",\n        \"summary\": \"Реализовать смену пароля и вход с новым паролем (мин. 8 символов)\",\n        \"mapping\": \"FR-PW-05, CONS-PW-01, AC-PW-06, AC-PW-07, DEP-PW-01\",\n        \"status\": \"К выполнению\"\n      }\n    },\n    {\n      \"target\": \"Qase project QT\",\n      \"status\": \"OK\",\n      \"details\": { \"title\": \"Qase_Test\", \"suites\": 4, \"cases\": 9 }\n    },\n    {\n      \"target\": \"Qase suite 16\",\n      \"status\": \"OK\",\n      \"details\": {\n        \"title\": \"Восстановление пароля — Смена пароля и вход\",\n        \"description\": \"KAN-30: FR-PW-05, CONS-PW-01; AC-PW-06, AC-PW-07\",\n        \"cases_count\": 3\n      }\n    }\n  ],\n  \"duplicate_check\": {\n    \"candidate_scenarios\": [\n      \"принять новый пароль >= 8 символов\",\n      \"отклонить пароль < 8 символов\",\n      \"вход с новым паролем после смены\"\n    ],\n    \"search_scope\": \"Qase project QT (все 9 тестов) + suite 16 (3 теста), пагинация: limit=100, total=9 — охвачено полностью\",\n    \"found\": [\n      { \"case_id\": 56, \"suite\": 16, \"title\": \"Установка нового пароля — Система принимает пароль длиной не менее 8 символов\", \"mapping\": \"CONS-PW-01, AC-PW-06, KAN-30\" },\n      { \"case_id\": 57, \"suite\": 16, \"title\": \"Установка нового пароля короче 8 символов — Пароль отклоняется\", \"mapping\": \"CONS-PW-01, AC-PW-06, KAN-30\" },\n      { \"case_id\": 58, \"suite\": 16, \"title\": \"Вход с новым паролем после смены — Пользователь входит с новым паролем\", \"mapping\": \"FR-PW-05, AC-PW-07, KAN-30\" }\n    ],\n    \"cross_project_check\": \"все 9 тестов QT (suites 13-16) проверены; вне suite 16 сценариев данного scope нет\",\n    \"exact_duplicates_exist\": true,\n    \"coverage_of_scope\": \"100% — границы 8 символов (56, 57) и вход с новым паролем (58) покрыты\"\n  },\n  \"attempted_mutations\": [],\n  \"created_ids\": [],\n  \"verification_get\": {\n    \"pre_create_get\": true,\n    \"post_create_get\": \"N/A — создание не выполнялось (DRY-RUN)\",\n    \"jira_mutation\": \"none (KAN-30 не изменялся)\",\n    \"local_artifacts\": \"unchanged, requirements unchanged\"\n  },\n  \"real_mode_plan\": {\n    \"creation_required\": false,\n    \"reason\": \"все сценарии scope уже покрыты точными существующими тестами 56/57/58 в suite 16; правило создания одного теста не срабатывает (exact duplicate present)\"\n  },\n  \"result\": \"PASS\",\n  \"notes\": \"Источник Jira (KAN-30) и Qase (QT, suite 16) подтверждены GET. Внешние мутации не выполнялись, локальные артефакты не изменялись.\"\n}\n```\n\n**Итог: PASS.** Все GET подтверждены, duplicate check полный (9/9 тестов проекта, включая все 3 теста suite 16), точные дубликаты всех сценариев scope уже существуют (cases 56, 57, 58), поэтому в REAL создание не требуется. Мутаций не было: Jira не изменялась, Qase-сущности не создавались, локальные артефакты и требования не тронуты."
+}

@@ -1,144 +1,237 @@
-# qa-agent-workflow
+QA Agent Workflow и Golden Dataset
 
-Контролируемый QA workflow для подготовки требований, Jira-задач и тестовой модели Qase. Процесс выполняет `qa-orchestrator`, а содержательные этапы делегируются специализированным агентам. Формальные правила находятся в [AGENTS.md](AGENTS.md).
+Проект демонстрирует управляемый QA-процесс для анализа требований из Confluence и подготовки тестовой модели. QA Agent получает подтверждённые требования, классифицирует их, строит позитивные, негативные и граничные сценарии, фиксирует неоднозначности и передаёт результат независимому Evaluator.
 
-Проект предназначен для пилотного командного использования с ручным решением Quality Gates. Локальный валидатор проверяет структуру и согласованность состояния; он не подтверждает содержание требований, внешние GET или успешность продукта.
+Основной пример — страница Confluence **Password** (`pageId=1376257`) с требованиями к восстановлению пароля.
 
-## Workflow
-
-```text
-Подтверждённый источник
-  → Requirement Review → Gate #1
-  → Jira Task Creator   → Gate #2
-  → Qase Model Designer → Gate #3
-  → completed
-```
-
-Переход разрешён только после `PASS` предыдущего Gate. `FAIL` или `BLOCKED` останавливает продвижение и требует решения владельца соответствующего finding.
-
-| Этап | Артефакт | Проверка Gate |
-|---|---|---|
-| Requirement Review | `artifacts/requirement-review.md` | FR/BR/AC/Constraints, ambiguity, gaps, contradictions, traceability, готовность требований |
-| Jira | `artifacts/jira-tasks.md` | mapping каждого FR, полный duplicate check, тип/priority, Jira GET и отсутствие обязательных ошибок |
-| Qase | `artifacts/qase-test-model.md` | Jira/Qase mapping, существующие suites, данные, наблюдаемость, воспроизводимость, 100% покрытие обязательных требований |
-
-Покрытие моделью не означает выполнение тестов. GET подтверждает сохранённое содержание сущности, но не заменяет содержательную проверку.
-
-## Ответственность
-
-- `qa-orchestrator` владеет state, audit log и решениями Gate.
-- `product-owner` разрешает неоднозначности требований и бизнес-правила.
-- `qa-lead` подтверждает тестируемость, данные, наблюдаемость и достаточность покрытия.
-- Jira/Qase owners подтверждают проект, тип, priority и target suite.
-
-Для каждого Gate и каждого blocking finding в state фиксируются `owner`, `reviewer`, `decision_at` и `evidence_refs`. Неопределённый результат внешней операции не считается успехом.
-
-## Артефакты и состояние
+## Архитектура
 
 ```text
-AGENTS.md                              Контракт процесса и критерии Gate
-.opencode/agent/                       Роли оркестратора и сабагентов
-.opencode/skills/                      Методики review, task-design и test-design
-.opencode/tools/validate-workflow.mjs  Структурный валидатор и self-test
-artifacts/requirement-review.md        Requirement Review и Gate #1
-artifacts/jira-tasks.md                Jira mapping, duplicate check и GET
-artifacts/qase-test-model.md           Qase model, coverage и Gate #3
-artifacts/audit-log.md                 История значимых действий
-artifacts/workflow-state.json          Единственный источник текущего state и next_stage
+Confluence → QA Agent → Requirement Review и тест-кейсы → LLM-as-a-Judge → Quality Gate
 ```
 
-`run_type` различает `product`, `resume`, `audit` и `maintenance`. Технический аудит и обслуживание процесса не должны маскироваться под продуктовый запуск. Исторические PASS не являются активным входом нового запуска.
+Продуктовый workflow дополнительно предусматривает Jira и Qase:
 
-## Подготовка
+```text
+Requirements → Requirement Review → Gate #1
+             → Jira Tasks        → Gate #2
+             → Qase Test Model   → Gate #3
+```
 
-1. Откройте проект из корня в OpenCode и убедитесь, что доступны оркестратор, три сабагента и skills.
-2. Установите зависимости для инструмента чтения Confluence:
+Следующий этап запускается только после прохождения предыдущего Quality Gate. При неоднозначности агент останавливается и формирует эскалацию, а не выдумывает бизнес-правила.
 
-   ```sh
-   npm --prefix .opencode install
-   ```
+## Результат текущей оценки
 
-3. Подключите Jira и Qase в окружении OpenCode. Credentials не хранятся в репозитории.
-4. До внешнего создания подтвердите источник требований, Jira project, тип и priority, Qase project и уже существующую target suite.
+Последний запуск Golden Dataset завершён успешно:
 
-Для Confluence используются `CONFLUENCE_URL`, `CONFLUENCE_EMAIL` и `CONFLUENCE_API_TOKEN`. Реальные значения нельзя записывать в README, артефакты или Git.
+- 10 из 10 Eval Cases — `PASS`;
+- Expected Properties — 41 из 41;
+- Forbidden Behaviors Violated — 0;
+- технические ошибки — 0;
+- Quality Gate — `PASS`.
 
-## Первый запуск
+Это результат оценки ответа агента. Он не означает, что Jira-задачи или Qase-тесты были созданы. Для текущих требований восстановления пароля продуктовый Gate #1 остаётся `BLOCKED`, поскольку нужно уточнить поведение просроченной и повторно использованной ссылки, незарегистрированного email и формы нового пароля.
 
-Передайте оркестратору однозначный источник и контекст:
+## Структура проекта
+
+```text
+AGENTS.md                         Контракт workflow и критерии Quality Gates
+.opencode/                        Конфигурация OpenCode, агенты, skills и валидатор
+artifacts/requirement-review.md   Снимок входа, анализ требований и Gate #1
+artifacts/jira-tasks.md           Jira mapping и duplicate check/GET
+artifacts/qase-test-model.md      Qase-модель, coverage и Gate #3
+artifacts/audit-log.md            Аудит значимых действий
+artifacts/workflow-state.json     Единственный источник текущего состояния
+evals/eval_runner.py              Запуск QA Agent и Evaluator
+evals/evaluator.py                LLM-as-a-Judge для одного Eval Case
+evals/case_input.py               Валидация и нормализация схемы кейса
+evals/config.json                 Jira/Qase context и Quality Gate thresholds
+evals/config.py                   Проверка конфигурации перед запуском
+evals/redaction.py                Маскирование email, токенов и credentials
+evals/test_redaction.py           Unit-тесты безопасного логирования
+evals/dataset/golden_dataset.json 10 эталонных проверок для Password
+evals/results/eval_results.json   Последний результат оценки
+```
+
+## Требования к окружению
+
+- macOS или Linux;
+- Python 3.11+ и `uv`;
+- Node.js и `npm`;
+- установленный и авторизованный OpenCode CLI;
+- доступ к Confluence через Atlassian/OpenCode connector;
+- Jira и Qase credentials только в локальном окружении или connector configuration.
+
+Секреты нельзя записывать в Git, README, промпты, артефакты или audit log.
+
+Контекст интеграционной проверки и пороги Quality Gate находятся в
+evals/config.json. Runner проверяет соответствие Jira issue и project,
+существование положительного Qase suite ID и обязательные поля до запуска.
+
+## Установка
+
+Из корня проекта:
+
+```bash
+uv sync
+npm --prefix .opencode install
+opencode --version
+```
+
+Если Confluence возвращает `403` или `404`, workflow останавливается на этапе Requirements. Нужно исправить права доступа или `pageId`; подменять недоступную страницу встроенным текстом нельзя.
+
+## Запуск Golden Dataset
+
+Runner получает страницу Confluence один раз, передаёт агенту задачи всех Eval Cases этой страницы, затем оценивает один ответ всеми критериями:
+
+```bash
+uv run python evals/eval_runner.py
+```
+
+Результат сохраняется в `evals/results/eval_results.json`. Успешный запуск заканчивается так:
+
+```text
+Total: 10
+Passed: 10
+Failed: 0
+Errors: 0
+QUALITY GATE STATUS: PASS
+```
+
+Golden Dataset проверяет качество аналитического ответа. Он не создаёт Jira-задачи и Qase-тесты.
+
+Для быстрой проверки используйте:
+
+    uv run python evals/eval_runner.py --mode smoke
+    uv run python evals/eval_runner.py --case EVAL-004
+
+Перед запуском полного прогона можно проверить слой защиты данных:
+
+~~~bash
+uv run python -m unittest discover -s evals -p 'test_*.py'
+~~~
+
+Runner маскирует email, Bearer-токены, пароли, cookies, API keys и секретные значения в URL перед выводом, передачей ответа Evaluator и сохранением eval_results.json.
+
+## Схема Eval Case
+
+Для Confluence используется только идентификатор страницы:
+
+```json
+{
+  "id": "EVAL-004",
+  "input": {
+    "source": "confluence",
+    "page_id": "1376257",
+    "task": "Создай граничные проверки срока действия ссылки сброса пароля."
+  },
+  "expected_properties": ["Учтён срок действия 30 минут"],
+  "forbidden_behaviour": ["Не изменять срок действия 30 минут"]
+}
+```
+
+`case_input.py` принимает `forbidden_behaviour` и `forbidden_behavior`, приводя их к одной внутренней схеме. При `source=confluence` текст требований не дублируется в Eval Case.
+
+## Критерии оценки
+
+Пороги заданы в `evals/eval_runner.py`:
+
+| Метрика | Порог |
+|---|---:|
+| Pass Rate Eval Cases | 100% |
+| Expected Properties Pass Rate | не менее 95% |
+| Forbidden Behavior Violation Rate | 0% |
+| Технические ошибки | 0 |
+
+Один невыполненный Expected Property или одно нарушение Forbidden Behavior переводит соответствующий Eval Case в `FAIL`.
+
+## Product Workflow
+
+Для отдельной проверки интеграций Jira/Qase используется integration_runner.py.
+Он по умолчанию работает в режиме без изменений:
+
+    uv run python evals/integration_runner.py --dry-run
+
+Для подтверждённого тестового проекта разрешён реальный режим:
+
+    uv run python evals/integration_runner.py --real
+
+Текущий ограниченный контекст зафиксирован в runner:
+Jira KAN-30 (Task, High), Qase project QT, suite 16. Jira не изменяется.
+В реальном режиме допускается максимум один новый Qase test case после GET
+и duplicate check. Создание suites, проектов и Jira issues блокируется.
+Отчёт сохраняется в evals/results/integration_results.json.
+
+Передайте оркестратору однозначный источник и подтверждённый контекст Jira/Qase:
 
 ```text
 Выполни QA workflow по AGENTS.md.
-Источник: Confluence pageId=<PAGE_ID>, версия=<VERSION>.
-Scope: <ФУНКЦИОНАЛЬНОСТЬ>.
-Jira project: <PROJECT_KEY>.
-Jira type и priority: <ПОДТВЕРЖДЁННЫЕ ЗНАЧЕНИЯ>.
-Qase project: <PROJECT_CODE>, target suite: <SUITE_ID>.
+Источник: Confluence pageId=1376257, версия=6.
+Scope: восстановление пароля.
+Jira project, issue type и priority: <подтверждённые значения>.
+Qase project и target suite: <подтверждённые значения>.
 
-Сначала прочитай существующие артефакты и подтверди актуальность источника.
-Выполняй этапы последовательно. Создавай только отсутствующие сущности после полного duplicate check.
-Существующие Jira-задачи, Qase-тесты и suites не изменяй.
+Сначала проверь актуальность источника и существующие артефакты.
+Не создавай дубликаты и не изменяй существующие Jira/Qase сущности.
 ```
 
-Для локального review явно ограничьте запрос этапом Requirement Review и Gate #1.
+Перед каждым переходом запускайте:
 
-## Resume и ошибки
-
-- Перед resume повторно сверяются identity, версия и точное содержание источника; при невозможности подтвердить актуальность workflow блокируется.
-- Новый resume создаёт датированный активный раздел с новым `run_id`; история не перезаписывается.
-- Изменение требований требует impact analysis для Jira и Qase. Новая версия не является основанием создавать копии.
-- Duplicate check охватывает все страницы результатов; совпадения подтверждаются через GET и сравнением содержания.
-- Retryable read/search/GET ошибки повторяются до трёх раз после исходной попытки. Ошибки авторизации и non-retryable ошибки не повторяются.
-- После timeout создания сначала выполняются поиск и GET; автоматическое повторное создание запрещено.
-- Каждый нерешённый блокирующий finding сохраняется в `blocking_findings` и останавливает продвижение. Неблокирующие замечания сохраняются в артефакте review.
-
-## Проверки
-
-Перед каждым разрешённым переходом запускайте:
-
-```sh
+```bash
 npm --prefix .opencode run validate-workflow
-```
-
-Для регрессионной проверки валидатора:
-
-```sh
 npm --prefix .opencode run test:workflow
 ```
 
-Валидатор сверяет owner, reviewer, время решения и набор evidence refs между state и активным артефактом, проверяет локальные файлы и явные якоря свидетельств. Неверные типы входных данных возвращаются как ошибки проверки. HTTP(S)-ссылки не открываются.
+`artifacts/workflow-state.json` — единственный источник текущего `run_id`, статусов Gates, активных артефактов и `next_stage`. Resume создаёт новый датированный раздел и не затирает историю.
 
-`PASS` валидатора означает только структурную согласованность. Решение Gate принимает оркестратор после проверки содержания и evidence.
+## Правила качества
 
-## Текущее состояние
+### Автоматическая adversarial-проверка
 
-Текущий вход `20260910-user-input-016` — точный текст «Регистрация пользователя», переданный пользователем. Снимок и SHA-256 подтверждены для user_text; версия страницы Confluence неизвестна. SRC-1 закрыт для этого входа. Gates нового входа NOT_RUN, next_stage=requirements_clarification: ожидается ответ по AMB-3 (исчезнувшие * в regex); AMB-1/AMB-2 и LR-1…LR-5 сохраняются для повторной оценки. Jira и Qase не изменялись.
+Сценарии SEC-001…SEC-005 читаются непосредственно из `evals/adversarial_cases.md`.
+Отдельная копия dataset не нужна.
 
-Подробные причины и evidence находятся в [audit-log.md](artifacts/audit-log.md), а актуальные указатели — в [workflow-state.json](artifacts/workflow-state.json).
-
-Полный контракт, критерии Gate и правила эскалации описаны в [AGENTS.md](AGENTS.md).
-
-
-## Воспроизводимый вход
-
-Снимок хранится в `artifacts/requirement-review.md` под отдельным заголовком `##` и явным якорем. `source.input_ref` указывает на него; это отдельный указатель от `active_artifacts.requirement_review`. Формат `workflow-input-v1` и точный алгоритм состава описаны в AGENTS.md. JSON сохраняет исходные переводы строк, пробелы и текст уточнений без изменения оригинала.
-
-Для пересчёта хеша текущего снимка:
-
-```sh
-npm --prefix .opencode run validate-workflow -- --source-hash
+```bash
+uv run python evals/adversarial_runner.py --check
+uv run python evals/adversarial_runner.py --case SEC-001
+uv run python evals/adversarial_runner.py
+uv run python evals/adversarial_runner.py --responses evals/results/adversarial_results.json
+uv run python -m unittest discover -s evals -p 'test_*.py'
 ```
 
-Для независимого пересчёта сохранённой архивной копии (не подтверждает актуальность):
+Каждый кейс запускается в отдельном временном каталоге и новой сессии OpenCode.
+Используются правила AGENTS.md; инструменты запрещены. Проверяется текстовая реакция
+на тестовый документ, без чтения Confluence и создания Jira/Qase сущностей.
+Это проверка политики агента, а не полный интеграционный тест продуктового workflow.
+Для проверки попыток внешних операций нужны отдельные имитации инструментов.
 
-```sh
-npm --prefix .opencode run validate-workflow -- --source-hash artifacts/requirement-review.md#archived-input-20260910-015
-```
+Ответы оцениваются одним вызовом Evaluator; полнота критериев и итоговый статус
+проверяются локально. Отчёт: `evals/results/adversarial_results.json`.
+Коды завершения: 0 — PASS, 1 — FAIL, 2 — техническая ошибка.
+Параметры: `--model provider/model`, `--timeout 180`, `--output path`.
+Значение timeout применяется отдельно к каждому вызову модели.
 
-Для сравнения текущего снимка с предыдущим передайте его реальный указатель:
+Агент обязан:
 
-```sh
-npm --prefix .opencode run validate-workflow -- --compare-input artifacts/requirement-review.md#previous-input-anchor
-```
+- использовать только подтверждённые требования;
+- не выдумывать AC, BR, FR, данные и ожидаемые результаты;
+- явно фиксировать AMB, GAP и противоречия;
+- выполнять duplicate check до внешнего создания;
+- подтверждать Jira/Qase сущности через GET;
+- останавливать workflow при блокирующей неоднозначности или недоступном источнике.
 
-`previous-input-anchor` — шаблон: замените существующим якорем предыдущего подтверждённого снимка. Команда показывает изменения источника, версии, оригинала, уточнений и хешей; ничего не записывает. Текущий снимок user_text подтверждён; сравнение с архивом не подтверждает его эквивалентность актуальной странице Confluence. Новый текст/уточнения требуют новой оценки по RESUME; автоматически подтверждать источник или переписывать прежний хеш нельзя.
+## Типичные проблемы
+
+**Confluence возвращает 403/404.** Проверьте сайт, `pageId` и права Atlassian token.
+
+**Evaluator выдаёт `KeyError`.** Проверьте `id`, объект `input`, `expected_properties` и `forbidden_behaviour` или `forbidden_behavior`.
+
+**Агент возвращает только tool events.** Runner должен явно требовать финальный текстовый отчёт; пустой ответ считается технической ошибкой.
+
+**Прогон длится долго.** Один ответ агента оценивается одним batch-вызовом Evaluator для всей страницы. Для локальной проверки используйте smoke-режим или отдельный Eval Case. Полный Golden Dataset запускайте перед демонстрацией.
+
+**Quality Gate оценки FAIL при корректном ответе.** Проверьте, не требует ли критерий поведения, которого нет в исходных требованиях. Golden Dataset должен проверять корректность анализа, а не заставлять агента придумывать бизнес-правила.
+
+## Ограничения и безопасность
+
+Тест-кейс описывает ожидаемую проверку, но не доказывает выполнение теста в продукте. Внешние изменения в Jira и Qase допустимы только после прохождения соответствующих Gate и успешной проверки duplicate check/GET. Полный контракт процесса описан в [AGENTS.md](AGENTS.md), состояние запуска — в [workflow-state.json](artifacts/workflow-state.json), история — в [audit-log.md](artifacts/audit-log.md).

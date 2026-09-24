@@ -1,17 +1,17 @@
 {
-  "run_id": "20260910-user-input-016",
-  "run_type": "resume",
+  "run_id": "20260922-password-001",
+  "run_type": "product",
   "source": {
-    "type": "user_text",
-    "identity": "Регистрация пользователя — текст из Confluence, переданный пользователем в текущем диалоге 2026-09-10",
-    "version": null,
-    "content_sha256": "c0d11359b11455b5fdb7b270363748b231ccc6483b6942393bde6db965534dfc",
+    "type": "Confluence",
+    "identity": "Confluence pageId=1376257; site pavelbordukov20.atlassian.net",
+    "version": 6,
+    "content_sha256": "1074ea1fc878f562269e3a10902420b240054a632b2d9bf84dd30f0126e57417",
     "confirmed": true,
-    "confirmed_at": "2026-09-10T18:30:25+00:00",
-    "input_ref": "artifacts/requirement-review.md#user-input-20260910-016"
+    "confirmed_at": "2026-09-22T08:31:38+00:00",
+    "input_ref": "artifacts/requirement-review.md#input-password-20260922-001"
   },
   "gates": {
-    "gate_1": "NOT_RUN",
+    "gate_1": "BLOCKED",
     "gate_2": "NOT_RUN",
     "gate_3": "NOT_RUN"
   },
@@ -19,111 +19,89 @@
     "gate_1": {
       "owner": "qa-orchestrator",
       "reviewer": "qa-lead/product-owner",
-      "decision_at": "2026-09-10T18:30:25+00:00",
+      "decision_at": "2026-09-22T08:54:35+00:00",
       "evidence_refs": [
-        "artifacts/requirement-review.md#user-input-20260910-016",
-        "artifacts/audit-log.md#user-input-20260910-016"
+        "artifacts/requirement-review.md#requirement-review-password-20260922-001",
+        "artifacts/requirement-review.md#current-gate-1-20260922-password-001",
+        "artifacts/audit-log.md#password-20260922-001"
       ]
     },
     "gate_2": {
       "owner": "qa-orchestrator",
       "reviewer": "qa-lead",
-      "decision_at": "2026-09-10T18:30:25+00:00",
+      "decision_at": "2026-09-22T08:54:35+00:00",
       "evidence_refs": [
-        "artifacts/requirement-review.md#user-input-20260910-016",
-        "artifacts/audit-log.md#user-input-20260910-016"
+        "artifacts/requirement-review.md#input-password-20260922-001",
+        "artifacts/audit-log.md#password-20260922-001"
       ]
     },
     "gate_3": {
       "owner": "qa-orchestrator",
       "reviewer": "qa-lead",
-      "decision_at": "2026-09-10T18:30:25+00:00",
+      "decision_at": "2026-09-22T08:54:35+00:00",
       "evidence_refs": [
-        "artifacts/requirement-review.md#user-input-20260910-016",
-        "artifacts/audit-log.md#user-input-20260910-016"
+        "artifacts/requirement-review.md#input-password-20260922-001",
+        "artifacts/audit-log.md#password-20260922-001"
       ]
     }
   },
   "next_stage": "requirements_clarification",
   "active_artifacts": {
-    "requirement_review": null,
+    "requirement_review": "artifacts/requirement-review.md#current-gate-1-20260922-password-001",
     "jira_tasks": null,
     "qase_model": null
   },
   "blocking_findings": [
     "AMB-1",
     "AMB-2",
-    "LR-1",
-    "LR-2",
-    "LR-3",
-    "LR-4",
-    "LR-5",
-    "AMB-3"
+    "GAP-1",
+    "GAP-2",
+    "GAP-3"
   ],
   "blocking_finding_details": {
     "AMB-1": {
       "owner": "product-owner",
       "reviewer": "qa-lead",
-      "decision_at": "2026-09-09T08:42:36Z",
+      "decision_at": "2026-09-22T08:54:35+00:00",
       "evidence_refs": [
-        "artifacts/requirement-review.md#current-gate-1-20260909-local-review-002"
+        "artifacts/requirement-review.md#current-gate-1-20260922-password-001",
+        "artifacts/audit-log.md#password-20260922-001"
       ]
     },
     "AMB-2": {
       "owner": "product-owner",
       "reviewer": "qa-lead",
-      "decision_at": "2026-09-09T08:42:36Z",
+      "decision_at": "2026-09-22T08:54:35+00:00",
       "evidence_refs": [
-        "artifacts/requirement-review.md#current-gate-1-20260909-local-review-002"
+        "artifacts/requirement-review.md#current-gate-1-20260922-password-001",
+        "artifacts/audit-log.md#password-20260922-001"
       ]
     },
-    "LR-1": {
-      "owner": "qa-lead",
-      "reviewer": "qa-orchestrator",
-      "decision_at": "2026-09-09T08:42:36Z",
-      "evidence_refs": [
-        "artifacts/qase-test-model.md#current-gate-3-20260909-local-review-002"
-      ]
-    },
-    "LR-2": {
-      "owner": "qa-lead",
-      "reviewer": "qa-orchestrator",
-      "decision_at": "2026-09-09T08:42:36Z",
-      "evidence_refs": [
-        "artifacts/qase-test-model.md#current-gate-3-20260909-local-review-002"
-      ]
-    },
-    "LR-3": {
-      "owner": "qa-lead",
-      "reviewer": "qa-orchestrator",
-      "decision_at": "2026-09-09T08:42:36Z",
-      "evidence_refs": [
-        "artifacts/qase-test-model.md#current-gate-3-20260909-local-review-002"
-      ]
-    },
-    "LR-4": {
-      "owner": "qa-lead",
-      "reviewer": "qa-orchestrator",
-      "decision_at": "2026-09-09T08:42:36Z",
-      "evidence_refs": [
-        "artifacts/qase-test-model.md#current-gate-3-20260909-local-review-002"
-      ]
-    },
-    "LR-5": {
-      "owner": "qa-lead",
-      "reviewer": "qa-orchestrator",
-      "decision_at": "2026-09-09T08:42:36Z",
-      "evidence_refs": [
-        "artifacts/qase-test-model.md#current-gate-3-20260909-local-review-002"
-      ]
-    },
-    "AMB-3": {
+    "GAP-1": {
       "owner": "product-owner",
-      "reviewer": "qa-orchestrator",
-      "decision_at": "2026-09-10T18:30:25+00:00",
+      "reviewer": "qa-lead",
+      "decision_at": "2026-09-22T08:54:35+00:00",
       "evidence_refs": [
-        "artifacts/requirement-review.md#user-input-20260910-016",
-        "artifacts/audit-log.md#user-input-20260910-016"
+        "artifacts/requirement-review.md#current-gate-1-20260922-password-001",
+        "artifacts/audit-log.md#password-20260922-001"
+      ]
+    },
+    "GAP-2": {
+      "owner": "product-owner",
+      "reviewer": "qa-lead",
+      "decision_at": "2026-09-22T08:54:35+00:00",
+      "evidence_refs": [
+        "artifacts/requirement-review.md#current-gate-1-20260922-password-001",
+        "artifacts/audit-log.md#password-20260922-001"
+      ]
+    },
+    "GAP-3": {
+      "owner": "product-owner",
+      "reviewer": "qa-lead",
+      "decision_at": "2026-09-22T08:54:35+00:00",
+      "evidence_refs": [
+        "artifacts/requirement-review.md#current-gate-1-20260922-password-001",
+        "artifacts/audit-log.md#password-20260922-001"
       ]
     }
   },

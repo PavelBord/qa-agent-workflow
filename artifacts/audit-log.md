@@ -546,3 +546,17 @@
 | run_id | time | stage | agent/tool | action | artifact ID | Requirement ID | reason | result |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 20260910-study-branch-018 | 2026-09-10T18:53:18+00:00 | Repository maintenance | qa-orchestrator / git, npm | verified | ai-agent-0.4; рабочие изменения; ai-agent-0.2 | N/A — учебная защита | Пользователь разрешил сохранить работу коммитом и создать учебную ветку от 0.2 | Перед коммитом validate-workflow PASS, 107 self-tests PASS, diff --check PASS. Назначение новой ветки: ai-agent-study; исходная ai-agent-0.2 не изменяется. Итог Git-операций будет проверен после выполнения и сообщён пользователю. |
+
+
+## Новый продуктовый запуск — Password — 2026-09-22T08:31:38+00:00, run_id=20260922-password-001
+<a id="password-20260922-001"></a>
+
+Продуктовый запуск: анализ требований страницы Confluence «Password» (pageId=1376257, version=6). Источник подтверждён оркестратором по полученной странице; точный снимок входа сохранён в requirement-review.md#input-password-20260922-001. Gates #1–#3 = NOT_RUN, активные артефакты отсутствуют. Проведён структурный прогон validate-workflow.
+
+| run_id | time | stage | agent/tool | action | artifact ID | Requirement ID | reason | result |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 20260922-password-001 | 2026-09-22T08:31:38+00:00 | Source intake | qa-orchestrator / confluence, node | verified | artifacts/requirement-review.md#input-password-20260922-001 | Password (REQ-01..REQ-07) | Актуальные требования получены из Confluence pageId=1376257, v6 | Источник подтверждён; SHA-256 = 1074ea1f…; снимок сохранён; gates NOT_RUN; validate-workflow PASS |
+| 20260922-password-001 | 2026-09-22T08:31:38+00:00 | Workflow state | qa-orchestrator | created | artifacts/workflow-state.json | — | Инициализация продуктового запуска | next_stage=requirements_review; активные артефакты null |
+| 20260922-password-001 | 2026-09-22T08:54:35+00:00 | Requirements | orchestrator / requirements-reviewer | delegated | artifacts/requirement-review.md#requirement-review-password-20260922-001 | Password (FR-1..FR-8) | Анализ требований Password v6 | Requirement Review BLOCKED: AMB-1, AMB-2, GAP-1..GAP-3; GAP-4/GAP-5 не блокируют |
+| 20260922-password-001 | 2026-09-22T08:54:35+00:00 | Quality Gate #1 | orchestrator | blocked | artifacts/requirement-review.md#current-gate-1-20260922-password-001 | AMB-1, AMB-2, GAP-1..GAP-3 | Содержательная проверка критериев Gate #1 | Gate #1 = BLOCKED: без уточнений нельзя определить наблюдаемые ожидаемые результаты негативных/граничных сценариев (задачи пользователя 2,4,5,6,8); Jira/Qase не запускаются |
+| 20260922-password-001 | 2026-09-22T08:54:35+00:00 | Escalation | qa-orchestrator | escalated | artifacts/requirement-review.md#current-gate-1-20260922-password-001 | AMB-1, AMB-2, GAP-1..GAP-3 | Требуются уточнения владельца продукта / Lead QA | Внешние сущности Jira/Qase не создавались; существующие исторические KAN-27..30, QT-50..58, suites 13-16 не изменялись |

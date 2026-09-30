@@ -8,3 +8,5 @@ __pycache__/
 .venv
 package-lock.json
 package.json
+# Local masked QA response checkpoints
+evals/results/responses/

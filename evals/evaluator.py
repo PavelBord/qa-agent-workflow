@@ -3,6 +3,7 @@ import subprocess
 from pathlib import Path
 from case_input import normalize_case
 from redaction import mask_sensitive
+from process_control import wait_for_process
 
 
 # =============================================================
@@ -335,7 +336,7 @@ ACTUAL AGENT RESPONSE:
     # RETURN
     # =========================================================
 
-    return evaluation_result
+    return validate_results(evaluation_result, [eval_case])[eval_case["id"]]
 
 
 def evaluate_responses_batch(eval_cases, agent_response, timeout_seconds=120):
@@ -385,6 +386,7 @@ ACTUAL AGENT RESPONSE:
   }}
 ]}}
 В каждом результате перечисли ВСЕ свойства и правила соответствующего кейса.
+Копируй тексты property и rule дословно из критериев. Не объединяй и не перефразируй их.
 """
 
     process = subprocess.Popen(
@@ -403,18 +405,11 @@ ACTUAL AGENT RESPONSE:
         stderr=subprocess.PIPE,
         text=True,
         bufsize=1,
+        start_new_session=True,
     )
 
     print("Evaluator batch запущен...")
-    try:
-        stdout, stderr = process.communicate(timeout=timeout_seconds)
-    except subprocess.TimeoutExpired as error:
-        process.kill()
-        stdout, stderr = process.communicate()
-        raise RuntimeError(
-            f"Evaluator batch превысил timeout {timeout_seconds} секунд. "
-            f"Процесс остановлен. STDERR: {mask_sensitive(stderr or '')}"
-        ) from error
+    stdout, stderr = wait_for_process(process, timeout_seconds, 'Evaluator')
 
     text_parts = []
     for line in stdout.splitlines():
@@ -434,7 +429,6 @@ ACTUAL AGENT RESPONSE:
     return_code = process.returncode
     print("EVALUATOR RETURN CODE:", return_code)
     if return_code != 0:
-        stderr = process.stderr.read() if process.stderr else ""
         raise RuntimeError(
             f"Evaluator batch завершился с ошибкой: {mask_sensitive(stderr)}"
         )
@@ -454,53 +448,68 @@ ACTUAL AGENT RESPONSE:
             f"Evaluator batch вернул невалидный JSON: {mask_sensitive(response)}"
         ) from error
 
-    if isinstance(payload, dict) and isinstance(payload.get("results"), list):
-        results = payload["results"]
-    elif isinstance(payload, dict) and (
-        "eval_case_id" in payload or "id" in payload
-    ):
-        # Models sometimes return the single requested case in the legacy
-        # object format instead of wrapping it in {"results": [...]}.
+    return validate_results(payload, normalized_cases)
+
+
+def validate_results(payload, cases):
+    """Reject incomplete assessments and derive status solely from boolean verdicts."""
+    if isinstance(payload, dict) and 'results' in payload:
+        results = payload['results']
+    elif isinstance(payload, dict) and ('eval_case_id' in payload or 'id' in payload):
         results = [payload]
     else:
-        results = None
+        raise RuntimeError('Evaluator должен вернуть объект results или одиночный кейс')
     if not isinstance(results, list):
-        raise RuntimeError("Evaluator batch должен вернуть массив results.")
-
-    expected_ids = {case["id"] for case in normalized_cases}
-    for result in results:
-        if "eval_case_id" not in result and "id" in result:
-            result["eval_case_id"] = result.pop("id")
-    actual_ids = {result.get("eval_case_id") for result in results}
-    if actual_ids != expected_ids or len(results) != len(expected_ids):
-        raise RuntimeError(
-            f"Evaluator batch вернул неполный набор кейсов: {sorted(actual_ids)}"
-        )
-
-    required_fields = {
-        "eval_case_id",
-        "expected_properties",
-        "forbidden_behavior",
-        "status",
-        "score",
-    }
+        raise RuntimeError('results должен быть списком')
+    expected = {}
+    for raw_case in cases:
+        case = normalize_case(raw_case)
+        case_id = case.get('id')
+        if not isinstance(case_id, str) or not case_id or case_id in expected:
+            raise RuntimeError('Dataset содержит пустой или повторяющийся ID')
+        expected[case_id] = case
     output = {}
-    for result in results:
-        if "eval_case_id" not in result and "id" in result:
-            result["eval_case_id"] = result.pop("id")
-        if "expected_properties" not in result and "properties" in result:
-            result["expected_properties"] = result.pop("properties")
-        if "forbidden_behavior" not in result and "forbidden_behaviour" in result:
-            result["forbidden_behavior"] = result.pop("forbidden_behaviour")
-        if "status" not in result and "result" in result:
-            result["status"] = result.pop("result")
-        if "score" not in result and result.get("status") in {"PASS", "FAIL"}:
-            result["score"] = 1.0 if result["status"] == "PASS" else 0.0
-        missing = required_fields - result.keys()
-        if missing:
-            raise RuntimeError(
-                f"В результате {result.get('eval_case_id')} отсутствуют: "
-                f"{sorted(missing)}; keys={sorted(result.keys())}"
-            )
-        output[result["eval_case_id"]] = result
+    for raw in results:
+        if not isinstance(raw, dict):
+            raise RuntimeError('Результат кейса должен быть объектом')
+        result = dict(raw)
+        for alias, canonical in [('id', 'eval_case_id'), ('properties', 'expected_properties'),
+                                  ('forbidden_behaviour', 'forbidden_behavior'), ('result', 'status')]:
+            if alias in result:
+                if canonical in result and result[canonical] != result[alias]:
+                    raise RuntimeError(f'Конфликт полей {alias} / {canonical}')
+                result[canonical] = result.pop(alias)
+        case_id = result.get('eval_case_id')
+        if not isinstance(case_id, str) or case_id not in expected or case_id in output:
+            raise RuntimeError('Неизвестный, отсутствующий или повторяющийся ID результата')
+        for field, label, verdict in [('expected_properties', 'property', 'passed'),
+                                       ('forbidden_behavior', 'rule', 'violated')]:
+            criteria = expected[case_id][field]
+            if any(not isinstance(c, str) or not c.strip() for c in criteria) or len(set(criteria)) != len(criteria):
+                raise RuntimeError(f'{case_id}: критерии dataset должны быть уникальными непустыми строками')
+            items = result.get(field)
+            if not isinstance(items, list) or len(items) != len(criteria):
+                raise RuntimeError(f'{case_id}: неполный набор {field}')
+            seen = set()
+            for item in items:
+                if not isinstance(item, dict):
+                    raise RuntimeError(f'{case_id}: критерий должен быть объектом')
+                text = item.get(label)
+                if not isinstance(text, str) or text not in criteria or text in seen:
+                    raise RuntimeError(f'{case_id}: пропущенный, изменённый или дублирующийся критерий {field}')
+                seen.add(text)
+                if type(item.get(verdict)) is not bool:
+                    raise RuntimeError(f'{case_id}: {verdict} должен быть JSON boolean')
+                if not isinstance(item.get('reason'), str) or not item['reason'].strip():
+                    raise RuntimeError(f'{case_id}: отсутствует обоснование критерия')
+        passed = all(x['passed'] for x in result['expected_properties']) and not any(x['violated'] for x in result['forbidden_behavior'])
+        status, score = ('PASS', 1.0) if passed else ('FAIL', 0.0)
+        result['judge_status'] = result.get('status')
+        result['judge_score'] = result.get('score')
+        result['status'] = status
+        result['score'] = score
+        result['aggregation_corrected'] = result['judge_status'] != status or result['judge_score'] != score
+        output[case_id] = result
+    if set(output) != set(expected):
+        raise RuntimeError('Evaluator вернул неполный набор кейсов')
     return output
